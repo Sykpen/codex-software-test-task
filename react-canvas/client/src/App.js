@@ -10,7 +10,6 @@ class App extends Component {
   callApi = async () => {
     const response = await fetch("/api/file");
     const body = await response.json();
-    console.log(body);
     if (response.status !== 200) throw Error(body.message);
     return body;
   };
@@ -22,11 +21,6 @@ class App extends Component {
       })
       .catch((err) => console.log(err));
   };
-
-  workWithFileData() {
-    console.log("tut");
-    console.log(this.state.dataFromFile && this.state.dataFromFile);
-  }
 
   render() {
     const listItems =
