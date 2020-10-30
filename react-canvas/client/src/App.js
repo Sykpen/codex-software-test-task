@@ -1,65 +1,51 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./index.css";
+
 class App extends Component {
   state = {
-    response: '',
-    post: '',
-    responseToPost: '',
+    response: "",
+    dataFromFile: "",
   };
-  componentDidMount() {
-    this.callApi()
-      .then(res => this.setState({ response: res.express }))
-      .catch(err => console.log(err));
-  }
+
   callApi = async () => {
-    const response = await fetch('/api/hello');
+    const response = await fetch("/api/file");
     const body = await response.json();
+    console.log(body);
     if (response.status !== 200) throw Error(body.message);
     return body;
   };
-  handleSubmit = async e => {
-    e.preventDefault();
-    const response = await fetch('/api/world', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ post: this.state.post }),
-    });
-    const body = await response.text();
-    this.setState({ responseToPost: body });
+
+  getFileData = async () => {
+    this.callApi()
+      .then((res) => {
+        this.setState({ dataFromFile: res.express });
+      })
+      .catch((err) => console.log(err));
   };
-render() {
+
+  workWithFileData() {
+    console.log("tut");
+    console.log(this.state.dataFromFile && this.state.dataFromFile);
+  }
+
+  render() {
+    const listItems =
+      this.state.dataFromFile &&
+      this.state.dataFromFile.map((line) => (
+        <div className="main">
+          {line.map((el) => (
+            <div className="item">{el}</div>
+          ))}
+          <br />
+        </div>
+      ));
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-        <p>{this.state.response}</p>
-        <form onSubmit={this.handleSubmit}>
-          <p>
-            <strong>Post to Server:</strong>
-          </p>
-          <input
-            type="text"
-            value={this.state.post}
-            onChange={e => this.setState({ post: e.target.value })}
-          />
-          <button type="submit">Submit</button>
-        </form>
-        <p>{this.state.responseToPost}</p>
+        {this.state.dataFromFile ? <p>Result of drawing:</p> : null}
+        <div className="container">{listItems}</div>
+        {this.state.dataFromFile ? null : (
+          <button onClick={() => this.getFileData()}>Draw Canvas</button>
+        )}
       </div>
     );
   }
